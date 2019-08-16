@@ -57,6 +57,7 @@ let scrape = async () => {
         // If we crash, tell where to restart at
         console.log(counter)
         console.log(insideCounter - 1)
+        console.log('temp')
     }
     browser.close();
     return allMemes;
