@@ -1,0 +1,13 @@
+{
+  "manifest_version": 2,
+  "name": "redditMemeExplain",
+  "version": "1.0",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.reddit.com/r/*/comments/*"
+      ],
+      "js": ["ExplainMeme.js"]
+    }
+  ]
+}
