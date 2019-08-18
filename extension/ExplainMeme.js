@@ -19,7 +19,7 @@ var searchTree = function(splitWord, index) {
 
 
 var changeText = function(originalWord, index) {
-    var element = document.getElementsByClassName('_1qeIAgB0cPwnLhDF9XSiJM')[index]
+    var element = document.getElementsByClassName('_3sf33-9rVAO_v4y0pIW_CH')[index].childNodes[1].children[1].children[2].children[0].childNodes[0]
     var parent = element.parentNode;
     var newElement = document.createElement('div');
 
@@ -35,31 +35,48 @@ var changeText = function(originalWord, index) {
     parent.insertBefore(newElement, element);
     parent.removeChild(element);
 }
-
-setTimeout(function() {
-    let listOfComments = document.getElementsByClassName('_1qeIAgB0cPwnLhDF9XSiJM')
-    listOfComments = [... listOfComments]
-    listOfComments = listOfComments.map((comment) => {
-        // TODO: learn regex
-        return comment.innerText.replace(/[.,\/#!?$'%\^&\*;:{}=\-_`~()]/g,"").replace(/\uFFFD/g, '').toLowerCase().trim()
-    })
-
-    for (var i = 0; i < listOfComments.length; i ++) {
-        let comment = listOfComments[i].split(' ')
-        let indexStart = 0
-        let indexEnd = 1
-        while (indexStart < comment.length) {
-            if(searchTree(comment.slice(indexStart, indexEnd), i)) {
-                indexEnd ++
-                if (indexEnd > comment.length) {
-                    indexStart ++
-                    indexEnd = indexStart + 1
+var listUsedComments = new Set()
+function checkAllComments () {
+    setTimeout(function() {
+        let listOfComments = document.getElementsByClassName('_3sf33-9rVAO_v4y0pIW_CH')
+        listOfComments = [... listOfComments]
+        listOfComments = listOfComments.filter((comment, index) => {
+            // We do not want the text of any comment that is actually just the "x more reply"  or "Continue this thread"
+            // Also must be a comment we have not looked at before
+            // Also do not check comments that are not showing as a result of too many downvotes
+            if (listUsedComments.has(comment.id)) {
+                return false
+            }
+            if (!comment.id.includes('moreComments') && !comment.id.includes('continueThread') && !comment.childNodes[1].children[0].innerText.includes('Comment removed by moderator') && typeof comment.children[1].children[1].children[2] !== 'undefined' && typeof comment.children[1].children[1].children[2].innerText !== 'undefined') {
+                listUsedComments.add(comment.id)
+                comment.index = index
+                return true
+            }
+            return false
+        }).map((comment) => {
+            // TODO: learn regex
+            return [comment.children[1].children[1].children[2].innerText.replace(/[.,\/#!?$'%\^&\*;:{}=\-_`~()]/g,"").replace(/\uFFFD/g, '').toLowerCase().trim(), comment.index]
+        })
+        for (var i = 0; i < listOfComments.length; i ++) {
+            let comment = listOfComments[i][0].split(' ')
+            let indexStart = 0
+            let indexEnd = 1
+            while (indexStart < comment.length) {
+                if(searchTree(comment.slice(indexStart, indexEnd), listOfComments[i][1])) {
+                    indexEnd ++
+                    if (indexEnd > comment.length) {
+                        indexStart ++
+                        indexEnd = indexStart + 1
+                    }
+                } else {
+                    indexStart = indexEnd
+                    indexEnd ++
                 }
-            } else {
-                indexStart ++
-                indexEnd = indexStart + 1
             }
         }
-    }
-}, 3000)
+        checkAllComments()
+    }, 3000)
+}
+
+checkAllComments()
 
