@@ -35,9 +35,16 @@ var changeText = function(originalWord, index) {
     parent.insertBefore(newElement, element);
     parent.removeChild(element);
 }
-var listUsedComments = new Set()
+let listUsedComments = new Set()
+let currentPath = window.location.pathname
 function checkAllComments () {
     setTimeout(function() {
+        // If we load a new page we want to clear the seen comments. This is to stop a bug where if the user were to leave a page and come back
+        // the new comments would not be properly tagged
+        if (currentPath !== window.location.pathname) {
+            listUsedComments = new Set()
+            currentPath = window.location.pathname
+        }
         let listOfComments = document.getElementsByClassName('_3sf33-9rVAO_v4y0pIW_CH')
         listOfComments = [... listOfComments]
         listOfComments = listOfComments.filter((comment, index) => {
@@ -75,7 +82,7 @@ function checkAllComments () {
             }
         }
         checkAllComments()
-    }, 3000)
+    }, 1000)
 }
 
 checkAllComments()
