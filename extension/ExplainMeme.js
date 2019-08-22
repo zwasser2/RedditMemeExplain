@@ -19,9 +19,10 @@ var searchTree = function(splitWord, index) {
 
 
 var changeText = function(originalWord, index) {
-    var element = document.getElementsByClassName('_3sf33-9rVAO_v4y0pIW_CH')[index].childNodes[1].children[1].children[2].children[0].childNodes[0]
+    var element = document.getElementsByClassName('_3sf33-9rVAO_v4y0pIW_CH')[index].childNodes[1].children[1].children[2].children[0]
     var parent = element.parentNode;
     var newElement = document.createElement('div');
+    console.log(originalWord)
 
     var originalWordWithSpaces = originalWord.join(' ')
     var indexOriginalString = element.innerHTML.toLowerCase()
